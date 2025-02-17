@@ -64,10 +64,12 @@ export function parse(ttml: string): TTMLLyrics {
         translatedLyric: "",
         romanLyric: "",
         isBackground,
-        isSecondary: false,
-        startTime: 0,
-        endTime: 0,
+        isSecondary: p.getAttribute("ttm:agent") === "v2",
+        startTime: parseTime(p.getAttribute("begin") || ""),
+        endTime: parseTime(p.getAttribute("end") || ""),
       };
+      // const startTimeLyrics = parseTime(p.getAttribute("startTime") || "");
+      // const endTimeLyrics = parseTime(p.getAttribute("entTime") || "");
       let includeBackground = false;
       function parseSpan(spans: HTMLCollectionOf<Element>) {
         for (let j = 0; j < spans.length; j++) {
