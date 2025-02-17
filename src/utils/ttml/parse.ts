@@ -2,7 +2,7 @@ import { TTMLLyrics, TTMLMetadata } from "./types";
 
 const timeRegexp =
   /^(((?<hour>[0-9]+):)?(?<min>[0-9]+):)?(?<sec>[0-9]+([.:]([0-9]{1,3}))?)$/;
-export function parseTime(timeSpan: string): number {
+function parseTime(timeSpan: string): number {
   const matches = timeRegexp.exec(timeSpan);
   if (!matches) {
     return 0;

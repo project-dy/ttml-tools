@@ -15,7 +15,7 @@ export interface LyricsLine {
   words: LyricsWord[];
   translatedLyric?: LyricsWord[];
   isBackground: boolean;
-  singerNumber: number;
+  singerNumber: number[];
   startTime: number;
   endTime: number;
 }
