@@ -30,7 +30,7 @@ export function parseTime(timeSpan: string): number {
 export function parse(ttml: string): TTMLLyrics {
   const domParser = new DOMParser();
   const doc: XMLDocument = domParser.parseFromString(ttml, "text/xml");
-  console.log(doc);
+  // console.log(doc);
   // debugger;
   const ttMeta: TTMLMetadata[] = [];
   const ttLines: TTMLLyrics["lines"] = [];
@@ -57,7 +57,7 @@ export function parse(ttml: string): TTMLLyrics {
 
     const ps = div.getElementsByTagName("p");
     function parseP(p: Element, isBackground = false) {
-      console.log(p);
+      // console.log(p);
       const spans = p.getElementsByTagName("span");
       const line: TTMLLyrics["lines"][number] = {
         words: [],
