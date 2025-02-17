@@ -1,21 +1,4 @@
-// import { XMLParser } from "fast-xml-parser";
-
-// const parser = new XMLParser({
-//   ignoreAttributes: false,
-//   attributeNamePrefix: "",
-//   allowBooleanAttributes: true,
-//   parseAttributeValue: true,
-//   trimValues: true,
-// });
-
-// export function parse(ttml: string) {
-//   return parser.parse(ttml);
-// }
-
 import { TTMLLyrics, TTMLMetadata } from "./types";
-
-import { Lyrics, LyricsMetadata, LyricsLine, LyricsWord } from "../types";
-import { LyricLine, LyricWord } from "../ulrc/types";
 
 const timeRegexp =
   /^(((?<hour>[0-9]+):)?(?<min>[0-9]+):)?(?<sec>[0-9]+([.:]([0-9]{1,3}))?)$/;
@@ -135,37 +118,4 @@ export function parse(ttml: string): TTMLLyrics {
   };
 }
 
-export function standardize(ttml: TTMLLyrics): Lyrics {
-  const metadata: LyricsMetadata[] = ttml.metadata;
-  const lines: LyricsLine[] = ttml.lines.map((line): LyricsLine => {
-    const words: LyricsWord[] = line.words.map((word): LyricsWord => {
-      let characterTime: number[] = [];
-      if (word.division) {
-        const temp = (word.endTime - word.startTime) / word.division + 1;
-        for (let i = 0; i < word.division; i++) {
-          characterTime[i] = temp * (i + 1);
-        }
-      }
-      return {
-        startTime: word.startTime,
-        endTime: word.endTime,
-        text: word.word,
-        characterTime,
-      };
-    });
-    return {
-      words,
-      translatedLyric: undefined, // 기존 lyrics는 단순한 text이지만, 이 lyrics는 time-synced lyrics임 따라서 migration불가
-      isBackground: line.isBackground,
-      singerNumber: !line.isSecondary ? 1 : 2,
-      startTime: line.startTime,
-      endTime: line.startTime,
-    };
-  });
-  return {
-    metadata,
-    lines,
-  };
-}
-
-export default { parse, standardize };
+export default { parse };

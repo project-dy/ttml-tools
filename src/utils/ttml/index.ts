@@ -1,3 +1,4 @@
-import { parse, standardize } from "./parse";
+import { parse } from "./parse";
+import { standardize } from "./standardize";
 
 export default { parse, standardize };
