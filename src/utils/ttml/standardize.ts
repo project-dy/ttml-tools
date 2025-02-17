@@ -36,7 +36,7 @@ export function standardize(ttml: TTMLLyrics): Lyrics {
         words,
         translatedLyric,
         isBackground: line.isBackground,
-        singerNumber: !line.isSecondary ? 1 : 2,
+        singerNumber: [!line.isSecondary ? 1 : 2],
         startTime: line.startTime,
         endTime: line.startTime,
       };
