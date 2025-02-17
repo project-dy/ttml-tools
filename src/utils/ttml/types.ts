@@ -3,15 +3,15 @@ export interface TTMLMetadata {
   value: string[];
 }
 
-export interface LyricWord {
+export interface TTMLLyricWord {
   startTime: number;
   endTime: number;
   word: string;
   division?: number;
 }
 
-export interface LyricLine {
-  words: LyricWord[];
+export interface TTMLLyricLine {
+  words: TTMLLyricWord[];
   translatedLyric: string;
   romanLyric: string;
   isBackground: boolean;
@@ -22,5 +22,5 @@ export interface LyricLine {
 
 export interface TTMLLyrics {
   metadata: TTMLMetadata[];
-  lines: LyricLine[];
+  lines: TTMLLyricLine[];
 }

@@ -14,6 +14,9 @@
 
 import { TTMLLyrics, TTMLMetadata } from "./types";
 
+import { Lyrics, LyricsMetadata, LyricsLine, LyricsWord } from "../types";
+import { LyricLine, LyricWord } from "../ulrc/types";
+
 const timeRegexp =
   /^(((?<hour>[0-9]+):)?(?<min>[0-9]+):)?(?<sec>[0-9]+([.:]([0-9]{1,3}))?)$/;
 export function parseTime(timeSpan: string): number {
@@ -92,6 +95,10 @@ export function parse(ttml: string): TTMLLyrics {
             line.romanLyric = span.textContent;
             continue;
           }
+          const division =
+            typeof span.getAttribute("amll:empty-beat") === "string"
+              ? Number(span.getAttribute("amll:empty-beat"))
+              : undefined;
           const startTime = parseTime(span.getAttribute("begin") || "");
           const endTime = parseTime(span.getAttribute("end") || "");
           // debugger;
@@ -101,6 +108,7 @@ export function parse(ttml: string): TTMLLyrics {
             startTime,
             endTime,
             word,
+            division,
           });
         }
       }
@@ -126,3 +134,38 @@ export function parse(ttml: string): TTMLLyrics {
     lines: ttLines,
   };
 }
+
+export function standardize(ttml: TTMLLyrics): Lyrics {
+  const metadata: LyricsMetadata[] = ttml.metadata;
+  const lines: LyricsLine[] = ttml.lines.map((line): LyricsLine => {
+    const words: LyricsWord[] = line.words.map((word): LyricsWord => {
+      let characterTime: number[] = [];
+      if (word.division) {
+        const temp = (word.endTime - word.startTime) / word.division + 1;
+        for (let i = 0; i < word.division; i++) {
+          characterTime[i] = temp * (i + 1);
+        }
+      }
+      return {
+        startTime: word.startTime,
+        endTime: word.endTime,
+        text: word.word,
+        characterTime,
+      };
+    });
+    return {
+      words,
+      translatedLyric: undefined, // 기존 lyrics는 단순한 text이지만, 이 lyrics는 time-synced lyrics임 따라서 migration불가
+      isBackground: line.isBackground,
+      singerNumber: !line.isSecondary ? 1 : 2,
+      startTime: line.startTime,
+      endTime: line.startTime,
+    };
+  });
+  return {
+    metadata,
+    lines,
+  };
+}
+
+export default { parse, standardize };
