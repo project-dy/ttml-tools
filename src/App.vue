@@ -2,6 +2,7 @@
 import { ref, useTemplateRef } from "vue";
 import ttml from "./utils/ttml";
 import elrc from "./utils/elrc";
+import { Lyrics } from "./utils/types";
 
 const isTauri = ref(false);
 if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
@@ -12,6 +13,8 @@ if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
   isTauri.value = false;
 }
 
+let lyrics: Lyrics;
+
 const handleFileInput = (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0];
   if (!file) {
@@ -19,16 +22,21 @@ const handleFileInput = (e: Event) => {
   }
   const reader = new FileReader();
   reader.onload = (e) => {
-    if (!e.target) return;
-    debugger;
-    console.log(e.target.files[0].name);
+    // if (!e.target) return;
+    // console.log(file.name);
     const text = e.target?.result as string;
-    const res = ttml.standardize(ttml.parse(text));
-    console.log(res);
-    const elrcLyrics = elrc.destandardize(res);
-    console.log(elrcLyrics);
-    const elrcString = elrc.stringify(elrcLyrics);
-    console.log(elrcString);
+    if (!text) return;
+    if (file.name.endsWith(".ttml")) {
+      lyrics = ttml.standardize(ttml.parse(text));
+      console.log(lyrics);
+
+      // const elrcLyrics = elrc.destandardize(res);
+      // console.log(elrcLyrics);
+      // const elrcString = elrc.stringify(elrcLyrics);
+      // console.log(elrcString);
+    } // else if (file.name.endsWith(".lrc") || file.name.endsWith(".elrc")) {
+    //   lyrics = elrc.standardize(elrc.parse(text));
+    // }
   };
   reader.readAsText(file);
 };
