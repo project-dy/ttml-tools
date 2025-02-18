@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ttml from "./utils/ttml";
+import elrc from "./utils/elrc";
 
 const isTauri = ref(false);
 if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
@@ -21,6 +22,10 @@ const handleFileInput = (e: Event) => {
     const text = e.target?.result as string;
     const res = ttml.standardize(ttml.parse(text));
     console.log(res);
+    const elrcLyrics = elrc.destandardize(res);
+    console.log(elrcLyrics);
+    const elrcString = elrc.stringify(elrcLyrics);
+    console.log(elrcString);
   };
   reader.readAsText(file);
 };

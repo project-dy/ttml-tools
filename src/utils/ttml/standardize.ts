@@ -1,8 +1,24 @@
 import { Lyrics, LyricsMetadata, LyricsLine, LyricsWord } from "../types";
-import { TTMLLyrics, TTMLLyricLine, TTMLLyricWord } from "./types";
+import {
+  TTMLLyrics,
+  TTMLLyricLine,
+  TTMLLyricWord,
+  TTMLMetadata,
+} from "./types";
 
 export function standardize(ttml: TTMLLyrics): Lyrics {
-  const metadata: LyricsMetadata[] = ttml.metadata;
+  const metadata: LyricsMetadata[] = ttml.metadata.map((meta: TTMLMetadata) => {
+    let newMeta: LyricsMetadata;
+    newMeta = meta;
+    switch (meta.key) {
+      case "musicName":
+        newMeta.key = "title";
+        break;
+      default:
+        break;
+    }
+    return newMeta;
+  });
   const lines: LyricsLine[] = ttml.lines.map(
     (line: TTMLLyricLine): LyricsLine => {
       const words: LyricsWord[] = line.words.map(

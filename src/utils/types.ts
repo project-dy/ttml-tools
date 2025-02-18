@@ -1,5 +1,5 @@
 export interface LyricsMetadata {
-  key: string;
+  key: "title" | "artists" | "album" | string;
   value: string[];
 }
 

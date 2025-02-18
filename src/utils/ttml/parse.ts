@@ -20,8 +20,8 @@ export function parse(ttml: string): TTMLLyrics {
   // debugger;
   const ttMeta: TTMLMetadata[] = [];
   const ttLines: TTMLLyrics["lines"] = [];
-
-  const metadata = doc.getElementsByTagName("metadata");
+  // debugger;
+  const metadata = doc.querySelector("metadata")?.children || [];
   for (let i = 0; i < metadata.length; i++) {
     const meta = metadata[i];
     const key = meta.getAttribute("key");

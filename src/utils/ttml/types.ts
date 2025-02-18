@@ -1,5 +1,5 @@
 export interface TTMLMetadata {
-  key: string;
+  key: "musicName" | "artists" | "album" | string;
   value: string[];
 }
 
