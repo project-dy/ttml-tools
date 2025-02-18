@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, useTemplateRef } from "vue";
 import ttml from "./utils/ttml";
 import elrc from "./utils/elrc";
 
@@ -19,6 +19,9 @@ const handleFileInput = (e: Event) => {
   }
   const reader = new FileReader();
   reader.onload = (e) => {
+    if (!e.target) return;
+    debugger;
+    console.log(e.target.files[0].name);
     const text = e.target?.result as string;
     const res = ttml.standardize(ttml.parse(text));
     console.log(res);
@@ -33,7 +36,12 @@ const handleFileInput = (e: Event) => {
 
 <template>
   <main class="container">
-    <input type="file" id="file-input" @change="handleFileInput" />
+    <input
+      type="file"
+      id="file-input"
+      @change="handleFileInput"
+      ref="fileInput"
+    />
   </main>
 </template>
 

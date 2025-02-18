@@ -1,4 +1,3 @@
-import { saveAsFile } from "../download";
 import { ELRCLyrics } from "./types";
 
 function stringifyTime(miliseconds: number): string {
@@ -28,6 +27,5 @@ export function stringify(elrc: ELRCLyrics) {
     });
     elrcString += `[${stringifyTime(line.startTime)}] ${words}\n`;
   });
-  saveAsFile("lyrics.elrc", elrcString);
   return elrcString;
 }
