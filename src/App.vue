@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useTemplateRef } from "vue";
+import { ref } from "vue";
 import ttml from "./utils/ttml";
 import elrc from "./utils/elrc";
 import { Lyrics } from "./utils/types";
@@ -34,9 +34,10 @@ const handleFileInput = (e: Event) => {
       // console.log(elrcLyrics);
       // const elrcString = elrc.stringify(elrcLyrics);
       // console.log(elrcString);
-    } // else if (file.name.endsWith(".lrc") || file.name.endsWith(".elrc")) {
-    //   lyrics = elrc.standardize(elrc.parse(text));
-    // }
+    } else if (file.name.endsWith(".lrc") || file.name.endsWith(".elrc")) {
+      // lyrics = elrc.standardize(elrc.parse(text));
+      console.log(elrc.parse(text));
+    }
   };
   reader.readAsText(file);
 };

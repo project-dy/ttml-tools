@@ -16,11 +16,18 @@ export interface TTMLLyricLine {
   romanLyric: string;
   isBackground: boolean;
   isSecondary: boolean;
-  startTime: number;
+  startTime: number; // if no, it should be 0
   endTime: number;
+}
+
+export interface TTMLLyricPart {
+  type?: "Verse" | "Chorus" | string;
+  lines: TTMLLyricLine[];
+  begin?: number;
+  end?: number;
 }
 
 export interface TTMLLyrics {
   metadata: TTMLMetadata[];
-  lines: TTMLLyricLine[];
+  parts: TTMLLyricPart[];
 }

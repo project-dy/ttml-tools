@@ -1,4 +1,9 @@
-import { TTMLLyrics, TTMLMetadata } from "./types";
+import {
+  TTMLLyricLine,
+  TTMLLyricPart,
+  TTMLLyrics,
+  TTMLMetadata,
+} from "./types";
 
 const timeRegexp =
   /^(((?<hour>[0-9]+):)?(?<min>[0-9]+):)?(?<sec>[0-9]+([.:]([0-9]{1,3}))?)$/;
@@ -19,7 +24,7 @@ export function parse(ttml: string): TTMLLyrics {
   // console.log(doc);
   // debugger;
   const ttMeta: TTMLMetadata[] = [];
-  const ttLines: TTMLLyrics["lines"] = [];
+  const ttParts: TTMLLyricPart[] = [];
   // debugger;
   const metadata = doc.querySelector("metadata")?.children || [];
   for (let i = 0; i < metadata.length; i++) {
@@ -39,6 +44,7 @@ export function parse(ttml: string): TTMLLyrics {
   const body = doc.getElementsByTagName("body")[0];
   const divs = body.getElementsByTagName("div");
   for (let i = 0; i < divs.length; i++) {
+    const ttLines: TTMLLyricLine[] = [];
     const div = divs[i];
 
     const ps = div.getElementsByTagName("p");

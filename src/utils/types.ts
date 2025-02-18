@@ -20,7 +20,12 @@ export interface LyricsLine {
   endTime: number;
 }
 
+export interface LyricsPart {
+  type: "Verse" | "Chorus" | string;
+  lines: LyricsLine[];
+}
+
 export interface Lyrics {
   metadata: LyricsMetadata[];
-  lines: LyricsLine[];
+  parts: LyricsPart[];
 }
