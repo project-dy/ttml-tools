@@ -4,14 +4,14 @@ export interface ELRCMetadata {
 }
 
 export interface ELRCLyricWord {
-  startTime: number;
-  word: string;
+  startTime?: number;
+  text: string;
 }
 
 export interface ELRCLyricLine {
   words: ELRCLyricWord[];
   waraoke?: "M" | "F" | "D";
-  startTime: number;
+  startTime?: number;
   comment?: string; // above line.
 }
 

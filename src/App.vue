@@ -35,8 +35,9 @@ const handleFileInput = (e: Event) => {
       // const elrcString = elrc.stringify(elrcLyrics);
       // console.log(elrcString);
     } else if (file.name.endsWith(".lrc") || file.name.endsWith(".elrc")) {
-      // lyrics = elrc.standardize(elrc.parse(text));
-      console.log(elrc.parse(text));
+      // console.log(elrc.parse(text));
+      lyrics = elrc.standardize(elrc.parse(text));
+      console.log(lyrics);
     }
   };
   reader.readAsText(file);

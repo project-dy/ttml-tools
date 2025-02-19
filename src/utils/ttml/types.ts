@@ -4,8 +4,8 @@ export interface TTMLMetadata {
 }
 
 export interface TTMLLyricWord {
-  startTime: number;
-  endTime: number;
+  startTime?: number;
+  endTime?: number;
   word: string;
   division?: number;
 }
@@ -16,8 +16,8 @@ export interface TTMLLyricLine {
   romanLyric: string;
   isBackground: boolean;
   isSecondary: boolean;
-  startTime: number; // if no, it should be 0
-  endTime: number;
+  startTime?: number; // if no, it should be 0
+  endTime?: number;
 }
 
 export interface TTMLLyricPart {

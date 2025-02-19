@@ -23,8 +23,16 @@ export function stringify(elrc: ELRCLyrics) {
   elrc.lines.forEach((line) => {
     let words: string = "";
     line.words.forEach((word) => {
-      words += `<${stringifyTime(word.startTime)}>${word.word}`;
+      if (!word.startTime) {
+        words += `${word.text}`;
+        return;
+      }
+      words += `<${stringifyTime(word.startTime)}>${word.text}`;
     });
+    if (!line.startTime) {
+      elrcString += `${words}\n`;
+      return;
+    }
     elrcString += `[${stringifyTime(line.startTime)}] ${words}\n`;
   });
   return elrcString;

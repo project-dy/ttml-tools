@@ -7,7 +7,8 @@ import {
 
 const timeRegexp =
   /^(((?<hour>[0-9]+):)?(?<min>[0-9]+):)?(?<sec>[0-9]+([.:]([0-9]{1,3}))?)$/;
-function parseTime(timeSpan: string): number {
+function parseTime(timeSpan?: string): number | undefined {
+  if (timeSpan === undefined) return;
   const matches = timeRegexp.exec(timeSpan);
   if (!matches) {
     return 0;
@@ -29,6 +30,14 @@ export function parse(ttml: string): TTMLLyrics {
   const metadata = doc.querySelector("metadata")?.children || [];
   for (let i = 0; i < metadata.length; i++) {
     const meta = metadata[i];
+    // TODO: Implement This
+    // if (meta.tagName == "iTunesMetadata") {
+    //   const iTunesMetadata = meta.children || [];
+    //   for (let j = 0; j < iTunesMetadata.length; j++) {
+    //     const tagName =
+    //   }
+    //   continue;
+    // }
     const key = meta.getAttribute("key");
     if (!key) continue;
     const value = meta.getAttribute("value");
@@ -51,7 +60,24 @@ export function parse(ttml: string): TTMLLyrics {
     function parseP(p: Element, isBackground = false) {
       // console.log(p);
       const spans = p.getElementsByTagName("span");
-      const line: TTMLLyrics["lines"][number] = {
+      if (!spans.length) {
+        if (!p.textContent) return;
+        // Static Lyrics
+        const line: TTMLLyricLine = {
+          words: [
+            {
+              word: p.textContent,
+            },
+          ],
+          isBackground,
+          isSecondary: p.getAttribute("ttm:agent") === "v2",
+          translatedLyric: "",
+          romanLyric: "",
+        };
+        ttLines.push(line);
+        return;
+      }
+      const line: TTMLLyricLine = {
         words: [],
         translatedLyric: "",
         romanLyric: "",
@@ -114,13 +140,20 @@ export function parse(ttml: string): TTMLLyrics {
     for (let j = 0; j < ps.length; j++) {
       parseP(ps[j]);
     }
+
+    ttParts[i] = {
+      type: div.getAttribute("itunes:songPart") || undefined,
+      lines: ttLines,
+      begin: parseTime(div.getAttribute("begin") || undefined),
+      end: parseTime(div.getAttribute("end") || undefined),
+    };
   }
 
   // debugger;
 
   return {
     metadata: ttMeta,
-    lines: ttLines,
+    parts: ttParts,
   };
 }
 

@@ -1,9 +1,16 @@
-import { Lyrics, LyricsMetadata, LyricsLine, LyricsWord } from "../types";
+import {
+  Lyrics,
+  LyricsMetadata,
+  LyricsLine,
+  LyricsWord,
+  LyricsPart,
+} from "../types";
 import {
   TTMLLyrics,
   TTMLLyricLine,
   TTMLLyricWord,
   TTMLMetadata,
+  TTMLLyricPart,
 } from "./types";
 
 export function standardize(ttml: TTMLLyrics): Lyrics {
@@ -19,47 +26,57 @@ export function standardize(ttml: TTMLLyrics): Lyrics {
     }
     return newMeta;
   });
-  const lines: LyricsLine[] = ttml.lines.map(
-    (line: TTMLLyricLine): LyricsLine => {
-      const words: LyricsWord[] = line.words.map(
-        (word: TTMLLyricWord): LyricsWord => {
-          let characterTime: number[] = [];
-          if (word.division) {
-            const temp = (word.endTime - word.startTime) / word.division + 1;
-            for (let i = 0; i < word.division; i++) {
-              characterTime[i] = temp * (i + 1);
-            }
-          }
+  const parts: LyricsPart[] = ttml.parts.map(
+    (part: TTMLLyricPart): LyricsPart => {
+      const lines: LyricsLine[] = part.lines.map(
+        (line: TTMLLyricLine): LyricsLine => {
+          const words: LyricsWord[] = line.words.map(
+            (word: TTMLLyricWord): LyricsWord => {
+              let characterTime: number[] = [];
+              if (word.division && word.startTime && word.endTime) {
+                const temp =
+                  (word.endTime - word.startTime) / word.division + 1;
+                for (let i = 0; i < word.division; i++) {
+                  characterTime[i] = temp * (i + 1);
+                }
+              }
+              return {
+                startTime: word.startTime,
+                endTime: word.endTime,
+                text: word.word,
+                characterTime,
+              };
+            },
+          );
+          let translatedLyric: LyricsWord[] | undefined;
+          if (line.translatedLyric)
+            translatedLyric = [
+              {
+                startTime: line.startTime,
+                endTime: line.endTime,
+                text: line.translatedLyric,
+              },
+            ];
+
           return {
-            startTime: word.startTime,
-            endTime: word.endTime,
-            text: word.word,
-            characterTime,
+            words,
+            translatedLyric,
+            isBackground: line.isBackground,
+            singerNumber: [!line.isSecondary ? 1 : 2],
+            startTime: line.startTime,
+            endTime: line.startTime,
           };
         },
       );
-      let translatedLyric: LyricsWord[] | undefined;
-      if (line.translatedLyric)
-        translatedLyric = [
-          {
-            startTime: line.startTime,
-            endTime: line.endTime,
-            text: line.translatedLyric,
-          },
-        ];
-
       return {
-        words,
-        translatedLyric,
-        isBackground: line.isBackground,
-        singerNumber: [!line.isSecondary ? 1 : 2],
-        startTime: line.startTime,
-        endTime: line.startTime,
+        type: part.type,
+        lines: lines,
       };
     },
   );
+
   return {
     metadata,
-    lines,
+    parts,
   };
 }

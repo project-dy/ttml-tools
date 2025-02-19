@@ -4,8 +4,8 @@ export interface LyricsMetadata {
 }
 
 export interface LyricsWord {
-  startTime: number;
-  endTime: number;
+  startTime?: number;
+  endTime?: number;
   text: string;
   roman?: string;
   characterTime?: number[]; // from startTime, how many ms spent to the [index] second
@@ -16,12 +16,12 @@ export interface LyricsLine {
   translatedLyric?: LyricsWord[];
   isBackground: boolean;
   singerNumber: number[];
-  startTime: number;
-  endTime: number;
+  startTime?: number;
+  endTime?: number;
 }
 
 export interface LyricsPart {
-  type: "Verse" | "Chorus" | string;
+  type?: "Verse" | "Chorus" | string;
   lines: LyricsLine[];
 }
 
