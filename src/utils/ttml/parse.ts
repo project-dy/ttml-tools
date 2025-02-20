@@ -30,17 +30,39 @@ export function parse(ttml: string): TTMLLyrics {
   const metadata = doc.querySelector("metadata")?.children || [];
   for (let i = 0; i < metadata.length; i++) {
     const meta = metadata[i];
+    let key: string | undefined = "";
+    let value: string | undefined = "";
     // TODO: Implement This
-    // if (meta.tagName == "iTunesMetadata") {
-    //   const iTunesMetadata = meta.children || [];
-    //   for (let j = 0; j < iTunesMetadata.length; j++) {
-    //     const tagName =
-    //   }
-    //   continue;
-    // }
-    const key = meta.getAttribute("key");
+    if (meta.tagName == "iTunesMetadata") {
+      debugger;
+      const iTunesMetadata = meta.children || [];
+      for (let j = 0; j < iTunesMetadata.length; j++) {
+        const iTunesMetadataElement = iTunesMetadata[j];
+        const iTunesMetadataElements = iTunesMetadataElement.children || [];
+        switch (iTunesMetadataElement.tagName) {
+          case "songwriters":
+            for (let k = 0; k < iTunesMetadataElements.length; k++) {
+              if (iTunesMetadataElements[k].tagName === "songwriter") {
+                key = "artists";
+                value = iTunesMetadataElements[k].innerHTML;
+              }
+            }
+            break;
+        }
+      }
+      if (!key) continue;
+      if (!value) continue;
+      const existing = ttMeta.find((m) => m.key === key);
+      if (existing) {
+        existing.value.push(value);
+        continue;
+      }
+      ttMeta.push({ key, value: [value] });
+      continue;
+    }
+    if (!key) key = meta.getAttribute("key") || undefined;
+    if (!value) value = meta.getAttribute("value") || undefined;
     if (!key) continue;
-    const value = meta.getAttribute("value");
     if (!value) continue;
     const existing = ttMeta.find((m) => m.key === key);
     if (existing) {
