@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Lyrics } from "../utils/types";
+
 let lyrics: Lyrics | undefined = undefined;
 let lyricsString = ref("");
 function onLyricsChange(newLyrics?: Lyrics) {

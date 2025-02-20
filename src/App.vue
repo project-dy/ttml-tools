@@ -4,6 +4,7 @@ import ttml from "./utils/ttml";
 import elrc from "./utils/elrc";
 import { Lyrics } from "./utils/types";
 import LyricsViewer from "./components/LyricsViewer.vue";
+import Background from "./components/Background.vue";
 
 const isTauri = ref(false);
 if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
@@ -54,6 +55,7 @@ const handleFileInput = (e: Event) => {
 </script>
 
 <template>
+  <Background />
   <main class="container">
     <input
       type="file"
