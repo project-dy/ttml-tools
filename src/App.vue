@@ -3,6 +3,7 @@ import { ref } from "vue";
 import ttml from "./utils/ttml";
 import elrc from "./utils/elrc";
 import { Lyrics } from "./utils/types";
+import LyricsViewer from "./components/LyricsViewer.vue";
 
 const isTauri = ref(false);
 if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
@@ -14,6 +15,13 @@ if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
 }
 
 let lyrics: Lyrics;
+
+const childComponentRef = ref<InstanceType<typeof LyricsViewer> | null>(null);
+
+function refresh() {
+  if (childComponentRef.value === null) return;
+  childComponentRef.value.onLyricsChange(lyrics);
+}
 
 const handleFileInput = (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0];
@@ -39,6 +47,7 @@ const handleFileInput = (e: Event) => {
       lyrics = elrc.standardize(elrc.parse(text));
       console.log(lyrics);
     }
+    refresh();
   };
   reader.readAsText(file);
 };
@@ -52,6 +61,7 @@ const handleFileInput = (e: Event) => {
       @change="handleFileInput"
       ref="fileInput"
     />
+    <LyricsViewer ref="childComponentRef" />
   </main>
 </template>
 

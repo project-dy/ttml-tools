@@ -34,7 +34,7 @@ export function parse(ttml: string): TTMLLyrics {
     let value: string | undefined = "";
     // TODO: Implement This
     if (meta.tagName == "iTunesMetadata") {
-      debugger;
+      // debugger;
       const iTunesMetadata = meta.children || [];
       for (let j = 0; j < iTunesMetadata.length; j++) {
         const iTunesMetadataElement = iTunesMetadata[j];
