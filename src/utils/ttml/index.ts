@@ -1,4 +1,4 @@
 import { parse } from "./parse";
-import { standardize } from "./standardize";
+import { standardize, destandardize } from "./standardize";
 
-export default { parse, standardize };
+export default { parse, standardize, destandardize };

@@ -27,6 +27,8 @@ export function parse(ttml: string): TTMLLyrics {
   const ttMeta: TTMLMetadata[] = [];
   const ttParts: TTMLLyricPart[] = [];
   // debugger;
+  // let singerInfo: { type: "person" | "other" | string; id: string }[];
+  let singerInfo: Record<string, "person" | "other" | string> = {};
   const metadata = doc.querySelector("metadata")?.children || [];
   for (let i = 0; i < metadata.length; i++) {
     const meta = metadata[i];
@@ -71,6 +73,13 @@ export function parse(ttml: string): TTMLLyrics {
     }
     if (!key) key = meta.getAttribute("key") || undefined;
     if (!value) value = meta.getAttribute("value") || undefined;
+    if (key == "ttm:agent") {
+      const type = meta.getAttribute("type");
+      const id = meta.getAttribute("xml:id");
+      if (!type || !id) continue;
+      // singerInfo.push({ type, id });
+      singerInfo[id] = type;
+    }
     if (!key) continue;
     if (!value) continue;
     const existing = ttMeta.find((m) => m.key === key);
@@ -98,7 +107,7 @@ export function parse(ttml: string): TTMLLyrics {
         const line: TTMLLyricLine = {
           words: [
             {
-              word: p.textContent,
+              text: p.textContent,
             },
           ],
           isBackground,
@@ -152,19 +161,19 @@ export function parse(ttml: string): TTMLLyrics {
         line.words.push({
           startTime,
           endTime,
-          word,
+          text: word,
           division,
         });
       }
       for (let j = 0; j < nodes.length; j++) {
         const node = nodes[j];
-        console.log();
+        // console.log();
         if (!node) continue;
         if (node.nodeType === Node.TEXT_NODE) {
           const text = node.textContent;
           if (text === null) return;
           line.words.push({
-            word: text,
+            text: text,
           });
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           const element = node as Element;
@@ -185,7 +194,10 @@ export function parse(ttml: string): TTMLLyrics {
       }
     }
     for (let j = 0; j < ps.length; j++) {
-      parseP(ps[j]);
+      const p = ps[j];
+      const backgroundPreVariable =
+        singerInfo[p.getAttribute("ttm:agent") || ""] === "other";
+      parseP(p, backgroundPreVariable);
     }
 
     ttParts[i] = {

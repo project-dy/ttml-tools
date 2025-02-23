@@ -50,6 +50,8 @@ const handleFileInput = (e: Event) => {
       // console.log(elrc.parse(text));
       lyrics = elrc.standardize(elrc.parse(text));
       console.log(lyrics);
+      const ttmlLyrics = ttml.destandardize(lyrics);
+      console.log(ttmlLyrics);
     }
     refresh();
   };

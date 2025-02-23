@@ -20,5 +20,7 @@ export function stringify(lyrics: Lyrics) {
   tt.setAttribute("xml:lang", "ja");
   const head = tt.appendChild(document.createElement("head"));
   const metadata = head.appendChild(document.createElement("metadata"));
+
+  debugger;
   // let xml = new XMLSerializer().serializeToString(tt);
 }

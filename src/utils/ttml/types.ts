@@ -6,14 +6,14 @@ export interface TTMLMetadata {
 export interface TTMLLyricWord {
   startTime?: number;
   endTime?: number;
-  word: string;
+  text: string;
   division?: number;
 }
 
 export interface TTMLLyricLine {
   words: TTMLLyricWord[];
-  translatedLyric: string;
-  romanLyric: string;
+  translatedLyric?: string;
+  romanLyric?: string;
   isBackground: boolean;
   isSecondary: boolean;
   startTime?: number; // if no, it should be 0

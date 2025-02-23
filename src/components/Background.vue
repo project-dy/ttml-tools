@@ -59,18 +59,18 @@ class PIXIBackground {
     //     .then(() => this.updateTexture(textureUrl));
     this.albumArt.texture = await Assets.load(textureUrl);
     this.albumArt.texture.update();
-    console.log(this.albumArt.texture.source);
-    console.log(this.albumArt.texture.source.label.includes(textureUrl));
+    // console.log(this.albumArt.texture.source);
+    // console.log(this.albumArt.texture.source.label.includes(textureUrl));
   }
 }
 // const bg = new PIXIBackground("/public/temp.jpg");
 const bg = new PIXIBackground();
 async function updateBackgroundImage(textureURL: string) {
-  console.log(bg.inited);
+  // console.log(bg.inited);
   // await bg.updateTexture(textureURL);
   // console.log("r");
   setTimeout(() => bg.updateTexture(textureURL), 1000);
-  console.log("r");
+  // console.log("r");
 }
 updateBackgroundImage("/public/temp1.jpg");
 defineExpose({ updateBackground: updateBackgroundImage });

@@ -43,7 +43,7 @@ export function standardize(ttml: TTMLLyrics): Lyrics {
               return {
                 startTime: word.startTime,
                 endTime: word.endTime,
-                text: word.word,
+                text: word.text,
                 characterTime,
               };
             },
@@ -75,6 +75,68 @@ export function standardize(ttml: TTMLLyrics): Lyrics {
     },
   );
 
+  return {
+    metadata,
+    parts,
+  };
+}
+
+export function destandardize(lyrics: Lyrics): TTMLLyrics {
+  const metadata: TTMLMetadata[] = lyrics.metadata.map(
+    (meta: LyricsMetadata) => {
+      let newMeta: TTMLMetadata;
+      newMeta = meta;
+      switch (meta.key) {
+        case "title":
+          newMeta.key = "musicName";
+          break;
+        default:
+          break;
+      }
+      return newMeta;
+    },
+  );
+  const parts: TTMLLyricPart[] = lyrics.parts.map(
+    (part: LyricsPart): TTMLLyricPart => {
+      const lines: TTMLLyricLine[] = part.lines.map(
+        (line: LyricsLine): TTMLLyricLine => {
+          const words: LyricsWord[] = line.words.map(
+            (word: LyricsWord): TTMLLyricWord => {
+              let characterTime = word.characterTime;
+              let newWord: TTMLLyricWord = {
+                text: word.text,
+                startTime: word.startTime,
+                endTime: word.endTime,
+              };
+              if (characterTime) {
+                newWord.division = characterTime.length;
+              }
+              return newWord;
+            },
+          );
+
+          let translatedLyric: string = "";
+          line.translatedLyric?.forEach(
+            (word) => (translatedLyric += word.text),
+          );
+
+          const newLine: TTMLLyricLine = {
+            words,
+            translatedLyric,
+            isBackground: line.isBackground,
+            isSecondary: line.singerNumber.includes(2),
+            startTime: line.startTime,
+            endTime: line.endTime,
+          };
+          return newLine;
+        },
+      );
+      return {
+        type: part.type,
+        lines: lines,
+      };
+    },
+  );
   return {
     metadata,
     parts,
