@@ -90,8 +90,9 @@ export function parse(ttml: string): TTMLLyrics {
     const ps = div.getElementsByTagName("p");
     function parseP(p: Element, isBackground = false) {
       // console.log(p);
-      const spans = p.getElementsByTagName("span");
-      if (!spans.length) {
+      const elements = p.children || [];
+      // const spans = p.getElementsByTagName("span");
+      if (!elements.length) {
         if (!p.textContent) return;
         // Static Lyrics
         const line: TTMLLyricLine = {
@@ -120,45 +121,57 @@ export function parse(ttml: string): TTMLLyrics {
       // const startTimeLyrics = parseTime(p.getAttribute("startTime") || "");
       // const endTimeLyrics = parseTime(p.getAttribute("entTime") || "");
       let includeBackground = false;
-      function parseSpan(spans: HTMLCollectionOf<Element>) {
-        for (let j = 0; j < spans.length; j++) {
-          const span = spans[j];
-          if (span.getAttribute("ttm:role") === "x-bg") {
-            // debugger;
-            parseP(span, true);
-            includeBackground = true;
-            continue;
-          } else if (
-            span.getAttribute("ttm:role") === "x-translation" &&
-            span.textContent
-          ) {
-            line.translatedLyric = span.textContent;
-            continue;
-          } else if (
-            span.getAttribute("ttm:role") === "x-roman" &&
-            span.textContent
-          ) {
-            line.romanLyric = span.textContent;
-            continue;
-          }
-          const division =
-            typeof span.getAttribute("amll:empty-beat") === "string"
-              ? Number(span.getAttribute("amll:empty-beat"))
-              : undefined;
-          const startTime = parseTime(span.getAttribute("begin") || "");
-          const endTime = parseTime(span.getAttribute("end") || "");
+      function parseSpan(span: Element) {
+        if (span.getAttribute("ttm:role") === "x-bg") {
           // debugger;
-          const word = span.textContent;
-          if (!word) continue;
+          parseP(span, true);
+          includeBackground = true;
+          return;
+        } else if (
+          span.getAttribute("ttm:role") === "x-translation" &&
+          span.textContent
+        ) {
+          line.translatedLyric = span.textContent;
+          return;
+        } else if (
+          span.getAttribute("ttm:role") === "x-roman" &&
+          span.textContent
+        ) {
+          line.romanLyric = span.textContent;
+          return;
+        }
+        const division =
+          typeof span.getAttribute("amll:empty-beat") === "string"
+            ? Number(span.getAttribute("amll:empty-beat"))
+            : undefined;
+        const startTime = parseTime(span.getAttribute("begin") || "");
+        const endTime = parseTime(span.getAttribute("end") || "");
+        // debugger;
+        const word = span.textContent;
+        if (!word) return;
+        line.words.push({
+          startTime,
+          endTime,
+          word,
+          division,
+        });
+      }
+      for (let j = 0; j < elements.length; j++) {
+        console.log(elements[j]);
+        if (!elements[j]) continue;
+        if (elements[j].tagName === "span") {
+          const span = elements[j];
+          parseSpan(span);
+        } else if (elements[j].tagName === "#text") {
+          const text = elements[j].textContent;
+          if (text === null) return;
           line.words.push({
-            startTime,
-            endTime,
-            word,
-            division,
+            word: text,
           });
+        } else {
+          debugger;
         }
       }
-      parseSpan(spans);
 
       // ttLines.push(line);
       if (includeBackground) {

@@ -5,6 +5,7 @@ import elrc from "./utils/elrc";
 import { Lyrics } from "./utils/types";
 import LyricsViewer from "./components/LyricsViewer.vue";
 import Background from "./components/Background.vue";
+import { saveAsFile } from "./utils/save";
 
 const isTauri = ref(false);
 if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
@@ -36,13 +37,15 @@ const handleFileInput = (e: Event) => {
     const text = e.target?.result as string;
     if (!text) return;
     if (file.name.endsWith(".ttml")) {
+      console.log(ttml.parse(text));
       lyrics = ttml.standardize(ttml.parse(text));
       console.log(lyrics);
 
-      // const elrcLyrics = elrc.destandardize(res);
-      // console.log(elrcLyrics);
-      // const elrcString = elrc.stringify(elrcLyrics);
-      // console.log(elrcString);
+      const elrcLyrics = elrc.destandardize(lyrics);
+      console.log(elrcLyrics);
+      const elrcString = elrc.stringify(elrcLyrics);
+      console.log(elrcString);
+      saveAsFile("lyrics.elrc", elrcString);
     } else if (file.name.endsWith(".lrc") || file.name.endsWith(".elrc")) {
       // console.log(elrc.parse(text));
       lyrics = elrc.standardize(elrc.parse(text));
