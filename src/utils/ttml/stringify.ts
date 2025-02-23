@@ -13,7 +13,12 @@ function stringifyTime(miliseconds: number): string {
 
 export function stringify(lyrics: Lyrics) {
   const tt = document.createElement("tt");
+  tt.setAttribute("xmlns", "http://www.w3.org/ns/ttml");
+  tt.setAttribute("xmlns:itunes", "http://music.apple.com/lyric-ttml-internal");
+  tt.setAttribute("xmlns:ttm", "http://www.w3.org/ns/ttml#metadata");
+  tt.setAttribute("itunes:timing", "Word"); // Word, Line, None
+  tt.setAttribute("xml:lang", "ja");
   const head = tt.appendChild(document.createElement("head"));
   const metadata = head.appendChild(document.createElement("metadata"));
-  // let xml = new XMLSerializer().serializeToString();
+  // let xml = new XMLSerializer().serializeToString(tt);
 }

@@ -46,19 +46,28 @@ export function parse(ttml: string): TTMLLyrics {
                 key = "artists";
                 value = iTunesMetadataElements[k].innerHTML;
               }
+              if (!key) continue;
+              if (!value) continue;
+              const existing = ttMeta.find((m) => m.key === key);
+              if (existing) {
+                existing.value.push(value);
+                continue;
+              }
+              ttMeta.push({ key, value: [value] });
+              continue;
             }
             break;
         }
       }
-      if (!key) continue;
-      if (!value) continue;
-      const existing = ttMeta.find((m) => m.key === key);
-      if (existing) {
-        existing.value.push(value);
-        continue;
-      }
-      ttMeta.push({ key, value: [value] });
-      continue;
+      // if (!key) continue;
+      // if (!value) continue;
+      // const existing = ttMeta.find((m) => m.key === key);
+      // if (existing) {
+      //   existing.value.push(value);
+      //   continue;
+      // }
+      // ttMeta.push({ key, value: [value] });
+      // continue;
     }
     if (!key) key = meta.getAttribute("key") || undefined;
     if (!value) value = meta.getAttribute("value") || undefined;
