@@ -90,9 +90,9 @@ export function parse(ttml: string): TTMLLyrics {
     const ps = div.getElementsByTagName("p");
     function parseP(p: Element, isBackground = false) {
       // console.log(p);
-      const elements = p.children || [];
+      const nodes = p.childNodes || [];
       // const spans = p.getElementsByTagName("span");
-      if (!elements.length) {
+      if (!nodes.length) {
         if (!p.textContent) return;
         // Static Lyrics
         const line: TTMLLyricLine = {
@@ -156,18 +156,21 @@ export function parse(ttml: string): TTMLLyrics {
           division,
         });
       }
-      for (let j = 0; j < elements.length; j++) {
-        console.log(elements[j]);
-        if (!elements[j]) continue;
-        if (elements[j].tagName === "span") {
-          const span = elements[j];
-          parseSpan(span);
-        } else if (elements[j].tagName === "#text") {
-          const text = elements[j].textContent;
+      for (let j = 0; j < nodes.length; j++) {
+        const node = nodes[j];
+        console.log();
+        if (!node) continue;
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent;
           if (text === null) return;
           line.words.push({
             word: text,
           });
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node as Element;
+          if (element.tagName == "span") {
+            parseSpan(element);
+          }
         } else {
           debugger;
         }
