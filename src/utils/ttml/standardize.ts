@@ -68,7 +68,8 @@ export function standardize(ttml: TTMLLyrics): Lyrics {
             words,
             translatedLyric,
             isBackground: line.isBackground,
-            singerNumber: [!line.isSecondary ? 1 : 2],
+            // singerNumber: [!line.isSecondary ? 1 : 2],
+            singerNumber: [line.singerNumber],
             startTime: line.startTime,
             endTime: line.startTime,
           };
@@ -82,7 +83,7 @@ export function standardize(ttml: TTMLLyrics): Lyrics {
   );
   const lngInfo = languageDetect(lyricsText);
   // console.log(lngInfo);
-  debugger;
+  // debugger;
 
   return {
     language: ttml.language,
@@ -135,7 +136,8 @@ export function destandardize(lyrics: Lyrics): TTMLLyrics {
             words,
             translatedLyric,
             isBackground: line.isBackground,
-            isSecondary: line.singerNumber.includes(2),
+            // isSecondary: line.singerNumber.includes(2),
+            singerNumber: line.singerNumber[0],
             startTime: line.startTime,
             endTime: line.endTime,
           };
@@ -149,6 +151,7 @@ export function destandardize(lyrics: Lyrics): TTMLLyrics {
     },
   );
   return {
+    language: lyrics.language,
     metadata,
     parts,
   };

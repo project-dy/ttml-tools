@@ -15,7 +15,8 @@ export interface TTMLLyricLine {
   translatedLyric?: string;
   romanLyric?: string;
   isBackground: boolean;
-  isSecondary: boolean;
+  // isSecondary: boolean;
+  singerNumber: number;
   startTime?: number; // if no, it should be 0
   endTime?: number;
 }

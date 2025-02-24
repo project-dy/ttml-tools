@@ -111,7 +111,9 @@ export function parse(ttml: string): TTMLLyrics {
             },
           ],
           isBackground,
-          isSecondary: p.getAttribute("ttm:agent") === "v2",
+          // isSecondary: p.getAttribute("ttm:agent") === "v2",
+          singerNumber:
+            Number(p.getAttribute("ttm:agent")?.replace("v", "")) || 1,
           translatedLyric: "",
           romanLyric: "",
         };
@@ -123,7 +125,9 @@ export function parse(ttml: string): TTMLLyrics {
         translatedLyric: "",
         romanLyric: "",
         isBackground,
-        isSecondary: p.getAttribute("ttm:agent") === "v2",
+        // isSecondary: p.getAttribute("ttm:agent") === "v2",
+        singerNumber:
+          Number(p.getAttribute("ttm:agent")?.replace("v", "")) || 1,
         startTime: parseTime(p.getAttribute("begin") || ""),
         endTime: parseTime(p.getAttribute("end") || ""),
       };

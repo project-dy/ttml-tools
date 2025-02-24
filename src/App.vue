@@ -45,7 +45,7 @@ const handleFileInput = (e: Event) => {
       console.log(elrcLyrics);
       const elrcString = elrc.stringify(elrcLyrics);
       console.log(elrcString);
-      saveAsFile("lyrics.elrc", elrcString);
+      // saveAsFile("lyrics.elrc", elrcString);
     } else if (file.name.endsWith(".lrc") || file.name.endsWith(".elrc")) {
       // console.log(elrc.parse(text));
       lyrics = elrc.standardize(elrc.parse(text));
@@ -60,7 +60,7 @@ const handleFileInput = (e: Event) => {
 </script>
 
 <template>
-  <Background />
+  <!-- <Background /> -->
   <main class="container">
     <input
       type="file"
