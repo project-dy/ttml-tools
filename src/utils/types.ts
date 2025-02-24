@@ -26,6 +26,8 @@ export interface LyricsPart {
 }
 
 export interface Lyrics {
+  language?: string;
+  guessedLanguage?: string;
   metadata: LyricsMetadata[];
   parts: LyricsPart[];
 }

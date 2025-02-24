@@ -13,7 +13,11 @@ import {
   TTMLLyricPart,
 } from "./types";
 
+import { detect as languageDetect } from "tinyld/heavy";
+
 export function standardize(ttml: TTMLLyrics): Lyrics {
+  // let languages: { lang: string; count: number }[] = [];
+  let lyricsText: string = "";
   const metadata: LyricsMetadata[] = ttml.metadata.map((meta: TTMLMetadata) => {
     let newMeta: LyricsMetadata;
     newMeta = meta;
@@ -40,6 +44,7 @@ export function standardize(ttml: TTMLLyrics): Lyrics {
                   characterTime[i] = temp * (i + 1);
                 }
               }
+              lyricsText += word.text;
               return {
                 startTime: word.startTime,
                 endTime: word.endTime,
@@ -58,6 +63,7 @@ export function standardize(ttml: TTMLLyrics): Lyrics {
               },
             ];
 
+          lyricsText += "\n";
           return {
             words,
             translatedLyric,
@@ -74,8 +80,13 @@ export function standardize(ttml: TTMLLyrics): Lyrics {
       };
     },
   );
+  const lngInfo = languageDetect(lyricsText);
+  // console.log(lngInfo);
+  debugger;
 
   return {
+    language: ttml.language,
+    guessedLanguage: lngInfo,
     metadata,
     parts,
   };

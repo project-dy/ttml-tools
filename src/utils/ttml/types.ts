@@ -28,6 +28,7 @@ export interface TTMLLyricPart {
 }
 
 export interface TTMLLyrics {
+  language?: string;
   metadata: TTMLMetadata[];
   parts: TTMLLyricPart[];
 }

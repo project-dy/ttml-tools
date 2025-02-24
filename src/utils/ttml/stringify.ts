@@ -1,4 +1,4 @@
-import { Lyrics } from "../types";
+import { TTMLLyrics, TTMLMetadata } from "./types";
 
 function stringifyTime(miliseconds: number): string {
   const minutes = String(Math.floor(miliseconds / 60000)).padStart(2, "0");
@@ -11,7 +11,7 @@ function stringifyTime(miliseconds: number): string {
   return `${minutes}:${seconds}.${milliseconds}`;
 }
 
-export function stringify(lyrics: Lyrics) {
+export function stringify(lyrics: TTMLLyrics) {
   const tt = document.createElement("tt");
   tt.setAttribute("xmlns", "http://www.w3.org/ns/ttml");
   tt.setAttribute("xmlns:itunes", "http://music.apple.com/lyric-ttml-internal");
@@ -19,8 +19,8 @@ export function stringify(lyrics: Lyrics) {
   tt.setAttribute("itunes:timing", "Word"); // Word, Line, None
   tt.setAttribute("xml:lang", "ja");
   const head = tt.appendChild(document.createElement("head"));
-  const metadata = head.appendChild(document.createElement("metadata"));
-
+  const metadatas = head.appendChild(document.createElement("metadata"));
+  lyrics.metadata.forEach((meta: TTMLMetadata) => {});
   debugger;
   // let xml = new XMLSerializer().serializeToString(tt);
 }

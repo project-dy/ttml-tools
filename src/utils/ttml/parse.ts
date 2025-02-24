@@ -211,6 +211,7 @@ export function parse(ttml: string): TTMLLyrics {
   // debugger;
 
   return {
+    language: doc.documentElement.getAttribute("xml:lang") || undefined,
     metadata: ttMeta,
     parts: ttParts,
   };
