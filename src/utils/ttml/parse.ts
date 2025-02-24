@@ -45,7 +45,7 @@ export function parse(ttml: string): TTMLLyrics {
           case "songwriters":
             for (let k = 0; k < iTunesMetadataElements.length; k++) {
               if (iTunesMetadataElements[k].tagName === "songwriter") {
-                key = "artists";
+                key = "songwriters";
                 value = iTunesMetadataElements[k].innerHTML;
               }
               if (!key) continue;

@@ -60,7 +60,7 @@ const handleFileInput = (e: Event) => {
 </script>
 
 <template>
-  <!-- <Background /> -->
+  <Background style="display: none" />
   <main class="container">
     <input
       type="file"
