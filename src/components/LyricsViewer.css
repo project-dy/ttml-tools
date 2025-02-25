@@ -1,0 +1,243 @@
+@charset "UTF-8";
+.display-synced-line {
+  --gradient-color: var(--gradient-color-override, 0);
+  --gradient-progress: 0;
+  --gradient-progress-2: 0;
+  --gradient-color-alpha: var(--gradient-color-alpha-override, 0.5);
+  --gradient-color-alpha-active: var(
+    --gradient-color-alpha-active-override,
+    0.85
+  );
+  margin: 0;
+  margin-right: calc(var(--lyrics-line-overbleed, 0) * -1);
+  padding-right: var(--lyrics-line-overbleed, 0);
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "SF Pro",
+    "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+@media only screen and (prefers-color-scheme: dark) {
+  .display-synced-line {
+    --gradient-color: var(--gradient-color-override, 255);
+  }
+}
+.display-synced-line.collapsible {
+  height: 0;
+  overflow: hidden;
+  animation: 0.3s ease-in-out 1 height-collapse;
+}
+.display-synced-line.is-current.collapsible {
+  height: auto;
+  overflow: initial;
+  animation: 0.3s ease-in-out 1 height-expand;
+}
+.display-synced-line.is-current.collapsible.is-first {
+  height: auto;
+  overflow: initial;
+  animation: none;
+}
+.display-synced-line.is-secondary-vocalist {
+  transform-origin: right center;
+  text-align: right;
+}
+.display-synced-line.is-animating {
+  will-change: transform, opacity, color, top, background-image;
+}
+.display-synced-line.is-animating.emphasis {
+  will-change: transform, opacity, color, top, background-image, text-shadow;
+}
+.display-synced-line[dir="rtl"] .line {
+  transform-origin: right center;
+}
+.display-synced-line:not(.is-secondary-vocalist) .primary-vocals > *::after,
+.display-synced-line:not(.is-secondary-vocalist) .background-vocals > *::after {
+  content: "";
+  margin-right: 0.3ch;
+}
+.display-synced-line.is-secondary-vocalist .primary-vocals > *::before,
+.display-synced-line.is-secondary-vocalist .background-vocals > *::before {
+  content: "";
+  margin-left: 0.3ch;
+}
+.background-vocals {
+  display: none;
+}
+.word {
+  display: inline-block;
+}
+.syllable {
+  display: inline-block;
+  position: relative;
+  transform-origin: right;
+  white-space: pre;
+}
+.display-synced-line.is-current
+  .syllable:not(.emphasis)[style*="--gradient-progress"] {
+  background-image: linear-gradient(
+    90deg,
+    rgba(
+        var(--gradient-color),
+        var(--gradient-color),
+        var(--gradient-color),
+        var(--gradient-color-alpha-active)
+      )
+      var(--gradient-progress),
+    rgba(
+        var(--gradient-color),
+        var(--gradient-color),
+        var(--gradient-color),
+        var(--gradient-color-alpha)
+      )
+      calc(var(--gradient-progress) + 20%)
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+}
+.letter {
+  display: inline-block;
+}
+.display-synced-line.is-current .letter[style*="--text-shadow-opacity"] {
+  text-shadow: 0 0 var(--text-shadow-blur-radius)
+    rgba(255, 255, 255, var(--text-shadow-opacity));
+  background-image: linear-gradient(
+    90deg,
+    rgba(
+        var(--gradient-color),
+        var(--gradient-color),
+        var(--gradient-color),
+        var(--gradient-color-alpha-active)
+      )
+      var(--gradient-progress),
+    rgba(
+        var(--gradient-color),
+        var(--gradient-color),
+        var(--gradient-color),
+        var(--gradient-color-alpha)
+      )
+      calc(var(--gradient-progress) + 20%)
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+}
+@supports (background-image: -webkit-named-image(apple-pay-logo-black)) or
+  (-webkit-appearance: -apple-pay-button) {
+  .display-synced-line.is-current .syllable,
+  .display-synced-line.is-current .letter {
+    margin: -0.5px -0.75px -0.5px -0.75px;
+    padding: 0.5px 0.75px 0.5px 0.75px;
+    clip-path: inset(0.5px 0.75px 0.5px 0.75px);
+  }
+}
+.line {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  border: 0;
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-size: 22px;
+  line-height: 1.1818181818;
+  font-weight: 700;
+  letter-spacing: 0em;
+  margin-top: var(--lyrics-line-margin-top, 30px);
+  margin-right: var(--lyrics-line-margin-right, 45px);
+  margin-bottom: var(--lyrics-line-margin-bottom, 0);
+  margin-left: var(--lyrics-line-margin-left, 20px);
+  transform: scale(1);
+  transform-origin: left center;
+  font-size: var(--lyrics-line-font-size, 22px);
+  color: var(--lyrics-line-color, var(--systemTertiary));
+  line-height: var(--lyrics-line-line-height, 1.1818181818);
+  text-align: initial;
+  transition:
+    color 0.1s,
+    transform 0.1s ease-in-out,
+    padding 0.1s ease-in-out;
+  animation-name: var(--line-animation-name, none);
+  animation-duration: 1s;
+  animation-play-state: var(--line-animation-play-state, paused);
+  animation-timing-function: linear;
+  animation-delay: 0.5;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+.line::-moz-focus-inner {
+  border: 0;
+}
+.line:lang(th) {
+  line-height: 1.4005545455;
+}
+.line:lang(zh) {
+  font-weight: 600;
+}
+.line:lang(ar) {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "SF Pro",
+    "Arabic UI Display", "SF Pro Icons", "Segoe UI", "Helvetica Neue",
+    "Helvetica", "Arial", sans-serif;
+}
+.line:hover,
+.line:active,
+.line:focus {
+  color: var(--lyrics-line-hover-color, var(--systemPrimary)) !important;
+}
+.display-synced-line.is-current .line {
+  padding: var(--lyrics-current-line-padding-block, 12px) 0;
+  transform: scale(var(--lyrics-current-line-scale, 1.1));
+  color: var(--lyrics-line-color-current, var(--systemPrimary));
+}
+.display-synced-line.is-current .line .background-vocals {
+  --gradient-color-alpha: var(--gradient-color-bg-alpha-override, 0.5);
+  --gradient-color-alpha-active: var(
+    --gradient-color-bg-alpha-active-override,
+    0.85
+  );
+  margin-top: 20px;
+  display: block;
+  font-size: var(--lyrics-line-bg-font-size, 14px);
+  color: var(--lyrics-line-bg-color, var(--lyrics-line-color-current));
+}
+.display-synced-line.collapsible:not(.is-current) .line {
+  transform: scale(0.1);
+}
+.display-synced-line.is-duet .line {
+  width: var(--lyrics-line-duet-width, 60%);
+}
+.display-synced-line.is-secondary-vocalist .line {
+  transform-origin: right center;
+  text-align: right;
+}
+@keyframes height-expand {
+  0% {
+    height: 0;
+  }
+  99% {
+    height: 80px;
+  }
+  100% {
+    height: auto;
+  }
+}
+@keyframes height-collapse {
+  0% {
+    height: 80px;
+  }
+  100% {
+    height: 0;
+  }
+}
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: var(--lyrics-display-synced-line-opacity, 1);
+  }
+}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, useTemplateRef } from "vue";
 import ttml from "./utils/ttml";
 import elrc from "./utils/elrc";
 import { Lyrics } from "./utils/types";
@@ -20,9 +20,21 @@ let lyrics: Lyrics;
 
 const childComponentRef = ref<InstanceType<typeof LyricsViewer> | null>(null);
 
+const audio = useTemplateRef("audio");
+
 function refresh() {
   if (childComponentRef.value === null) return;
   childComponentRef.value.onLyricsChange(lyrics);
+}
+
+function onCurrentTimeChange(currentTime: number) {
+  if (childComponentRef.value === null) return;
+  childComponentRef.value.onCurrentTimeChange(currentTime);
+}
+
+function syncAudioElement(audioElement: HTMLAudioElement) {
+  if (childComponentRef.value === null) return;
+  childComponentRef.value.syncAudioElement(audioElement);
 }
 
 const handleFileInput = (e: Event) => {
@@ -52,6 +64,23 @@ const handleFileInput = (e: Event) => {
       console.log(lyrics);
       const ttmlLyrics = ttml.destandardize(lyrics);
       console.log(ttmlLyrics);
+    } else if (file.name.endsWith(".flac") || file.name.endsWith(".mp3")) {
+      const blob = window.URL || window.webkitURL;
+      if (!audio.value || !blob) return;
+      const audioElement = audio.value;
+      const blobURL = blob.createObjectURL(file);
+      audioElement.src = blobURL;
+      audioElement.load();
+      // audioElement.onload = () => {
+      //   blob.revokeObjectURL(blobURL);
+      // };
+      audioElement.addEventListener("timeupdate", (e) => {
+        const el = e.target as HTMLAudioElement;
+        const currentTime = el.currentTime;
+        // console.log(currentTime);
+        onCurrentTimeChange(currentTime);
+        syncAudioElement(el);
+      });
     }
     refresh();
   };
@@ -62,6 +91,7 @@ const handleFileInput = (e: Event) => {
 <template>
   <Background style="display: none" />
   <main class="container">
+    <audio ref="audio" controls />
     <input
       type="file"
       id="file-input"
