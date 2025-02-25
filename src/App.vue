@@ -76,12 +76,32 @@ const handleFileInput = (e: Event) => {
       // audioElement.onload = () => {
       //   blob.revokeObjectURL(blobURL);
       // };
-      audioElement.addEventListener("timeupdate", (e) => {
+      /*audioElement.addEventListener("timeupdate", (e: Event) => {
         const el = e.target as HTMLAudioElement;
         const currentTime = el.currentTime;
         // console.log(currentTime);
         onCurrentTimeChange(currentTime);
         syncAudioElement(el);
+        });*/
+      let interval: number = 0;
+      audioElement.addEventListener("play", (e) => {
+        interval = setInterval(
+          (e: Event) => {
+            const el = e.target as HTMLAudioElement;
+            const currentTime = el.currentTime;
+            // console.log(currentTime);
+            onCurrentTimeChange(currentTime);
+            syncAudioElement(el);
+          },
+          0,
+          e,
+        );
+      });
+      audioElement.addEventListener("pause", () => {
+        clearInterval(interval);
+      });
+      audioElement.addEventListener("load", () => {
+        clearInterval(interval);
       });
     }
     refresh();

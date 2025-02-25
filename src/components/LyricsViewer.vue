@@ -45,10 +45,12 @@ const findStartTime = (currentTime: number): IndexedLine | undefined => {
   }
 
   if (currentTime <= indexedLines[0].startTime) {
+    return undefined;
     return indexedLines[0]; // currentTime이 첫 번째 startTime보다 작거나 같을 경우
   }
 
   if (currentTime >= indexedLines[indexedLines.length - 1].startTime) {
+    return undefined;
     return indexedLines[indexedLines.length - 1]; // currentTime이 마지막 startTime보다 크거나 같을 경우
   }
 
@@ -89,6 +91,7 @@ async function parseLyrics(lyrics: Lyrics) {
           words: [],
         };
         lineElement.addEventListener("click", (e) => {
+          audio.focus();
           console.log(`${audio.currentTime} -> ${lineStartTime / 1000}`);
           audio.currentTime = lineStartTime / 1000;
           audio.play();
@@ -154,7 +157,12 @@ function onCurrentTimeChange(currentTime: number) {
   const lyricsDiv = lyricsElement.value;
   // console.log(currentTime);
   const currentLineInfo = findStartTime(currentTime * 1000);
-  if (!currentLineInfo) return;
+  if (!currentLineInfo) {
+    lyricsDiv
+      .querySelectorAll(".is-current")
+      .forEach((e) => e.classList.remove("is-current"));
+    return;
+  }
   const currentLine =
     lyricsState[currentLineInfo.part].lines[currentLineInfo.line];
   console.log(currentLine);
