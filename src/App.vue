@@ -71,6 +71,8 @@ const handleFileInput = (e: Event) => {
       const blobURL = blob.createObjectURL(file);
       audioElement.src = blobURL;
       audioElement.load();
+      audioElement.play();
+      audioElement.pause();
       // audioElement.onload = () => {
       //   blob.revokeObjectURL(blobURL);
       // };

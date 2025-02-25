@@ -15,6 +15,7 @@ interface Word {
 }
 
 interface Line {
+  startTime: number;
   highlighted: Boolean;
   element: HTMLDivElement;
   words: Word[];
@@ -27,35 +28,86 @@ interface Part {
 
 let lyricsState: Part[] = [];
 
+interface IndexedLine {
+  startTime: number;
+  part: number;
+  line: number;
+}
+
+let indexedLines: IndexedLine[] = [];
+
+const sortLine = async () =>
+  indexedLines.sort((a, b) => a.startTime - b.startTime);
+
+const findStartTime = (currentTime: number): IndexedLine | undefined => {
+  if (indexedLines.length === 0) {
+    return undefined; // 배열이 비어있는 경우 undefined 반환
+  }
+
+  if (currentTime <= indexedLines[0].startTime) {
+    return indexedLines[0]; // currentTime이 첫 번째 startTime보다 작거나 같을 경우
+  }
+
+  if (currentTime >= indexedLines[indexedLines.length - 1].startTime) {
+    return indexedLines[indexedLines.length - 1]; // currentTime이 마지막 startTime보다 크거나 같을 경우
+  }
+
+  for (let i = 1; i < indexedLines.length; i++) {
+    if (
+      currentTime >= indexedLines[i - 1].startTime &&
+      currentTime < indexedLines[i].startTime
+    ) {
+      return indexedLines[i - 1]; // currentTime이 두 startTime 사이에 있을 경우
+    }
+  }
+  return undefined;
+};
+
 async function parseLyrics(lyrics: Lyrics) {
   if (!lyricsElement.value) return;
   const lyricsDiv = lyricsElement.value;
   lyricsDiv.innerHTML = "";
   const parts = lyrics.parts;
   (async () => {
-    parts.forEach((part: LyricsPart, i: number) => {
+    for (let i = 0; i < parts.length; i++) {
+      const part: LyricsPart = parts[i];
+      // parts.forEach((part: LyricsPart, i: number) => {
       lyricsState[i] = { highlighted: false, lines: [] };
       const partElement = document.createElement("div");
       // part.type
       const lines = part.lines;
-      lines.forEach((line: LyricsLine, j: number) => {
+      for (let j = 0; j < lines.length; j++) {
+        const line: LyricsLine = lines[j];
+        // lines.forEach((line: LyricsLine, j: number) => {
         const lineElement = document.createElement("div");
+        const lineStartTime = line.startTime;
+        if (!lineStartTime) return;
         lyricsState[i].lines[j] = {
+          startTime: lineStartTime,
           highlighted: false,
           element: lineElement,
           words: [],
         };
-        const lineStartTime = line.startTime;
-        if (lineStartTime)
-          lineElement.addEventListener("click", () => {
-            console.log(`${audio.currentTime} -> ${lineStartTime / 1000}`);
-            audio.currentTime = lineStartTime / 1000;
-          });
-        lineElement.classList.add("display-synced-line"); //("display-synced-line", "is-duet", "is-animating", "is-current", "is-secondary-vocalist","is-duet")
+        lineElement.addEventListener("click", (e) => {
+          console.log(`${audio.currentTime} -> ${lineStartTime / 1000}`);
+          audio.currentTime = lineStartTime / 1000;
+          audio.play();
+        });
+        indexedLines.push({ part: i, line: j, startTime: lineStartTime });
+
+        lineElement.classList.add("display-synced-line", "is-animating"); //("display-synced-line", "is-duet", "is-animating", "is-current", "is-secondary-vocalist","is-duet")
         const buttonElement = document.createElement("button");
         buttonElement.classList.add("line");
+        const vocalDiv = document.createElement("div");
+        vocalDiv.classList.add(
+          !line.isBackground ? "primary-vocals" : "background-vocals",
+        );
+        const wordDiv = document.createElement("div");
+        wordDiv.classList.add("word");
         const words = line.words;
-        words.forEach((word: LyricsWord, k: number) => {
+        for (let k = 0; k < words.length; k++) {
+          const word: LyricsWord = words[k];
+          // words.forEach((word: LyricsWord, k: number) => {
           const wordElement = document.createElement("span");
           lyricsState[i].lines[j].words[k] = {
             highlighted: false,
@@ -74,15 +126,18 @@ async function parseLyrics(lyrics: Lyrics) {
               String(word.startTime - line.startTime),
             );
           }
-          buttonElement.appendChild(wordElement);
-        });
+          wordDiv.appendChild(wordElement);
+        }
+        vocalDiv.appendChild(wordDiv);
+        buttonElement.appendChild(vocalDiv);
         lineElement.appendChild(buttonElement);
         partElement.appendChild(lineElement);
         partElement.appendChild(document.createElement("br"));
-      });
+      }
       lyricsDiv.appendChild(partElement);
       lyricsDiv.appendChild(document.createElement("br"));
-    });
+    }
+    await sortLine();
   })();
 }
 
@@ -95,7 +150,20 @@ function onLyricsChange(newLyrics?: Lyrics) {
 }
 console.log(lyrics);
 function onCurrentTimeChange(currentTime: number) {
+  if (!lyricsElement.value) return;
+  const lyricsDiv = lyricsElement.value;
   // console.log(currentTime);
+  const currentLineInfo = findStartTime(currentTime * 1000);
+  if (!currentLineInfo) return;
+  const currentLine =
+    lyricsState[currentLineInfo.part].lines[currentLineInfo.line];
+  console.log(currentLine);
+  if (!currentLine.element.classList.contains("is-current")) {
+    lyricsDiv
+      .querySelectorAll(".is-current")
+      .forEach((e) => e.classList.remove("is-current"));
+    currentLine.element.classList.add("is-current");
+  }
 }
 function syncAudioElement(audioElement: HTMLAudioElement) {
   // console.log(audioElement);

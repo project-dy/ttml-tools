@@ -1,5 +1,6 @@
 @charset "UTF-8";
 .display-synced-line {
+  --lyrics-line-color: hsla(0, 0%, 100%, 0.4);
   --gradient-color: var(--gradient-color-override, 0);
   --gradient-progress: 0;
   --gradient-progress-2: 0;
@@ -132,6 +133,7 @@
   }
 }
 .line {
+  box-shadow: 0 0 0px;
   margin: 0;
   padding: 0;
   display: inline-block;
