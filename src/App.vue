@@ -64,7 +64,12 @@ const handleFileInput = (e: Event) => {
       console.log(lyrics);
       const ttmlLyrics = ttml.destandardize(lyrics);
       console.log(ttmlLyrics);
-    } else if (file.name.endsWith(".flac") || file.name.endsWith(".mp3")) {
+    } else if (
+      file.name.endsWith(".flac") ||
+      file.name.endsWith(".mp3") ||
+      file.name.endsWith(".m4a") ||
+      file.name.endsWith(".webm")
+    ) {
       const blob = window.URL || window.webkitURL;
       if (!audio.value || !blob) return;
       const audioElement = audio.value;
@@ -76,12 +81,32 @@ const handleFileInput = (e: Event) => {
       // audioElement.onload = () => {
       //   blob.revokeObjectURL(blobURL);
       // };
-      audioElement.addEventListener("timeupdate", (e) => {
+      /*audioElement.addEventListener("timeupdate", (e: Event) => {
         const el = e.target as HTMLAudioElement;
         const currentTime = el.currentTime;
         // console.log(currentTime);
         onCurrentTimeChange(currentTime);
         syncAudioElement(el);
+        });*/
+      let interval: number = 0;
+      audioElement.addEventListener("play", (e) => {
+        interval = setInterval(
+          (e: Event) => {
+            const el = e.target as HTMLAudioElement;
+            const currentTime = el.currentTime;
+            // console.log(currentTime);
+            onCurrentTimeChange(currentTime);
+            syncAudioElement(el);
+          },
+          0,
+          e,
+        );
+      });
+      audioElement.addEventListener("pause", () => {
+        clearInterval(interval);
+      });
+      audioElement.addEventListener("load", () => {
+        clearInterval(interval);
       });
     }
     refresh();

@@ -7,6 +7,8 @@ let lyricsString = ref("");
 
 let lyricsElement = useTemplateRef("lyricsElement");
 
+let rootElement = useTemplateRef("root");
+
 let audio: HTMLAudioElement = new Audio();
 
 interface Word {
@@ -45,10 +47,12 @@ const findStartTime = (currentTime: number): IndexedLine | undefined => {
   }
 
   if (currentTime <= indexedLines[0].startTime) {
+    return undefined;
     return indexedLines[0]; // currentTime이 첫 번째 startTime보다 작거나 같을 경우
   }
 
   if (currentTime >= indexedLines[indexedLines.length - 1].startTime) {
+    return undefined;
     return indexedLines[indexedLines.length - 1]; // currentTime이 마지막 startTime보다 크거나 같을 경우
   }
 
@@ -89,6 +93,7 @@ async function parseLyrics(lyrics: Lyrics) {
           words: [],
         };
         lineElement.addEventListener("click", (e) => {
+          audio.focus();
           console.log(`${audio.currentTime} -> ${lineStartTime / 1000}`);
           audio.currentTime = lineStartTime / 1000;
           audio.play();
@@ -154,16 +159,55 @@ function onCurrentTimeChange(currentTime: number) {
   const lyricsDiv = lyricsElement.value;
   // console.log(currentTime);
   const currentLineInfo = findStartTime(currentTime * 1000);
-  if (!currentLineInfo) return;
+  if (!currentLineInfo) {
+    lyricsDiv
+      .querySelectorAll(".is-current")
+      .forEach((e) => e.classList.remove("is-current"));
+    return;
+  }
   const currentLine =
     lyricsState[currentLineInfo.part].lines[currentLineInfo.line];
-  console.log(currentLine);
+  rootElement.scroll({
+    top: lyricsDiv.getBoundingClientRect().top + window.scrollY,
+    behavior: "smooth",
+  });
+  // console.log(currentLine);
   if (!currentLine.element.classList.contains("is-current")) {
     lyricsDiv
       .querySelectorAll(".is-current")
       .forEach((e) => e.classList.remove("is-current"));
     currentLine.element.classList.add("is-current");
   }
+  // style="transform: matrix(1, 0, 0, 1, 0, -2); --gradient-progress: 100%;"
+  const time = currentTime * 1000 - currentLine.startTime;
+  let lastPercentage: number = 100;
+  currentLine.words.forEach((word) => {
+    const wordElement = word.element;
+    const duration = Number(wordElement.getAttribute("data-duration"));
+    const delay = Number(wordElement.getAttribute("data-delay"));
+    if (!duration) return;
+    let percentage = ((time - delay) / duration) * 100;
+    if (percentage < 0) percentage = 0;
+    // if (percentage === 0) return;
+    if (percentage > 100) percentage = 100;
+    /*console.log(
+      word.element.innerText,
+      delay,
+      duration,
+      time,
+      currentTime * 1000,
+      currentLine.startTime,
+      percentage,
+    );*/
+    if (lastPercentage > 90) {
+      wordElement.style.transform = "matrix(1, 0, 0, 1, 0, -2)";
+      wordElement.style.setProperty("--gradient-progress", `${percentage}%`);
+    } else {
+      wordElement.style.transform = "matrix(1, 0, 0, 1, 0, 0)";
+      wordElement.style.setProperty("--gradient-progress", `0%`);
+    }
+    lastPercentage = percentage;
+  });
 }
 function syncAudioElement(audioElement: HTMLAudioElement) {
   // console.log(audioElement);
@@ -177,8 +221,10 @@ defineExpose({
 </script>
 
 <template>
-  <textarea>{{ lyricsString }}</textarea>
-  <div ref="lyricsElement" />
+  <div style="height: 75vh; overflow-y: auto" ref="root">
+    <textarea style="display: none">{{ lyricsString }}</textarea>
+    <div ref="lyricsElement" />
+  </div>
 </template>
 
 <style src="./LyricsViewer.css"></style>

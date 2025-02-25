@@ -175,7 +175,7 @@ export function parse(ttml: string): TTMLLyrics {
         if (!node) continue;
         if (node.nodeType === Node.TEXT_NODE) {
           const text = node.textContent;
-          if (text === null) return;
+          if (text === null || (j === 0 && text === " ")) continue;
           line.words.push({
             text: text,
           });
