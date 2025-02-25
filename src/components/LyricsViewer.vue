@@ -74,6 +74,7 @@ defineExpose({
 } */
 
 .line {
+  box-shadow: 0 0 0px;
   --lyrics-line-margin-top: 30px;
   --lyrics-line-margin-right: 0px;
   --lyrics-line-margin-bottom: 0px;
@@ -81,7 +82,7 @@ defineExpose({
   --lyrics-line-font-size: 34px;
   --lyrics-line-color: hsla(0, 0%, 100%, 0.175);
   --systemTertiary: hsla(0, 0%, 100%, 0.4);
-  --lyrics-line-height: 1.2059623529;
+  --lyrics-line-height: 1.2;
   --line-animation-play-state: running;
   margin: 0;
   padding: 0;
