@@ -182,7 +182,7 @@ function onCurrentTimeChange(currentTime: number) {
 
   if (lastLine !== currentLine) {
     try {
-      console.log(lastLineElement);
+      // console.log(lastLineElement);
       lastLineElement.scrollIntoView();
     } catch (e) {}
     if (lastLine !== undefined) lastLineElement = currentLine.element;
@@ -222,12 +222,12 @@ function onCurrentTimeChange(currentTime: number) {
       currentLine.startTime,
       percentage,
     );*/
-    if (lastPercentage > 90) {
+    if (lastPercentage == 100) {
       wordElement.style.transform = "matrix(1, 0, 0, 1, 0, -2)";
       wordElement.style.setProperty("--gradient-progress", `${percentage}%`);
     } else {
       wordElement.style.transform = "matrix(1, 0, 0, 1, 0, 0)";
-      wordElement.style.setProperty("--gradient-progress", `0%`);
+      wordElement.style.setProperty("--gradient-progress", `-100%`);
     }
     lastPercentage = percentage;
   });
