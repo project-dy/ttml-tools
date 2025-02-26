@@ -167,10 +167,14 @@ function onCurrentTimeChange(currentTime: number) {
   }
   const currentLine =
     lyricsState[currentLineInfo.part].lines[currentLineInfo.line];
-  rootElement.scroll({
-    top: lyricsDiv.getBoundingClientRect().top + window.scrollY,
-    behavior: "smooth",
-  });
+
+  currentLine.element.scrollIntoView();
+
+  // lyricsDiv.scroll({
+  //   top: currentLine.element.offsetTop,
+  //   behavior: "smooth",
+  // });
+
   // console.log(currentLine);
   if (!currentLine.element.classList.contains("is-current")) {
     lyricsDiv
@@ -221,7 +225,10 @@ defineExpose({
 </script>
 
 <template>
-  <div style="height: 75vh; overflow-y: auto" ref="root">
+  <div
+    style="height: 75vh; overflow-y: auto; scroll-behavior: smooth"
+    ref="root"
+  >
     <textarea style="display: none">{{ lyricsString }}</textarea>
     <div ref="lyricsElement" />
   </div>
