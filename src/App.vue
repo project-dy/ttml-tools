@@ -5,7 +5,7 @@ import elrc from "./utils/elrc";
 import { Lyrics } from "./utils/types";
 import LyricsViewer from "./components/LyricsViewer.vue";
 import Background from "./components/Background.vue";
-import { saveAsFile } from "./utils/save";
+// import { saveAsFile } from "./utils/save";
 
 const isTauri = ref(false);
 if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {

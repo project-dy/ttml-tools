@@ -7,7 +7,7 @@ let lyricsString = ref("");
 
 let lyricsElement = useTemplateRef("lyricsElement");
 
-let rootElement = useTemplateRef("root");
+// let rootElement = useTemplateRef("root");
 
 let audio: HTMLAudioElement = new Audio();
 
@@ -67,7 +67,7 @@ const findStartTime = (currentTime: number): IndexedLine | undefined => {
   return undefined;
 };
 let lastLineElement: HTMLElement;
-let beforeLineElement: HTMLElement;
+// let beforeLineElement: HTMLElement;
 
 async function parseLyrics(lyrics: Lyrics) {
   if (!lyricsElement.value) return;
@@ -83,10 +83,10 @@ async function parseLyrics(lyrics: Lyrics) {
       if (i === 0)
         partElement.appendChild(
           (() => {
-            const beforeLineElement = document.createElement("div");
-            beforeLineElement.style.height = "312.96px";
-            lastLineElement = beforeLineElement;
-            return beforeLineElement;
+            const lastLineElement = document.createElement("div");
+            lastLineElement.style.height = "312.96px";
+            // lastLineElement = beforeLineElement;
+            return lastLineElement;
           })(),
         );
       // part.type
