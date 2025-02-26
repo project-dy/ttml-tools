@@ -66,6 +66,8 @@ const findStartTime = (currentTime: number): IndexedLine | undefined => {
   }
   return undefined;
 };
+let lastLineElement: HTMLElement;
+let beforeLineElement: HTMLElement;
 
 async function parseLyrics(lyrics: Lyrics) {
   if (!lyricsElement.value) return;
@@ -78,6 +80,15 @@ async function parseLyrics(lyrics: Lyrics) {
       // parts.forEach((part: LyricsPart, i: number) => {
       lyricsState[i] = { highlighted: false, lines: [] };
       const partElement = document.createElement("div");
+      if (i === 0)
+        partElement.appendChild(
+          (() => {
+            const beforeLineElement = document.createElement("div");
+            beforeLineElement.style.height = "312.96px";
+            lastLineElement = beforeLineElement;
+            return beforeLineElement;
+          })(),
+        );
       // part.type
       const lines = part.lines;
       for (let j = 0; j < lines.length; j++) {
@@ -92,7 +103,7 @@ async function parseLyrics(lyrics: Lyrics) {
           element: lineElement,
           words: [],
         };
-        lineElement.addEventListener("click", (e) => {
+        lineElement.addEventListener("click", () => {
           audio.focus();
           console.log(`${audio.currentTime} -> ${lineStartTime / 1000}`);
           audio.currentTime = lineStartTime / 1000;
@@ -154,6 +165,7 @@ function onLyricsChange(newLyrics?: Lyrics) {
   lyricsString.value = JSON.stringify(lyrics);
 }
 console.log(lyrics);
+let lastLine: Line;
 function onCurrentTimeChange(currentTime: number) {
   if (!lyricsElement.value) return;
   const lyricsDiv = lyricsElement.value;
@@ -168,7 +180,14 @@ function onCurrentTimeChange(currentTime: number) {
   const currentLine =
     lyricsState[currentLineInfo.part].lines[currentLineInfo.line];
 
-  currentLine.element.scrollIntoView();
+  if (lastLine !== currentLine) {
+    try {
+      console.log(lastLineElement);
+      lastLineElement.scrollIntoView();
+    } catch (e) {}
+    if (lastLine !== undefined) lastLineElement = currentLine.element;
+    lastLine = currentLine;
+  }
 
   // lyricsDiv.scroll({
   //   top: currentLine.element.offsetTop,
