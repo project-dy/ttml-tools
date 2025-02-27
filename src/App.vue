@@ -88,7 +88,7 @@ const handleFileInput = (e: Event) => {
         onCurrentTimeChange(currentTime);
         syncAudioElement(el);
         });*/
-      let interval: number = 0;
+      let interval: ReturnType<typeof setInterval>;
       audioElement.addEventListener("play", (e) => {
         interval = setInterval(
           (e: Event) => {
