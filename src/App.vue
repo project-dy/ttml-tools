@@ -15,9 +15,22 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { RouterView } from "vue-router";
+import PlayerBar from "./components/PlayerBar.vue";
+import { shallowRef, useTemplateRef } from "vue";
+
+const audioElement = useTemplateRef("audio");
+
+const playerBar = useTemplateRef("playerBar");
+setInterval(
+  () =>
+    playerBar.value?.setAudioElement(audioElement.value as HTMLAudioElement),
+  0,
+);
 </script>
 
 <template>
+  <audio ref="audio" class="pl-64" />
+
   <SidebarProvider>
     <AppSidebar />
     <SidebarInset>
@@ -40,8 +53,17 @@ import { RouterView } from "vue-router";
           </Breadcrumb>
         </div>
       </header>
-      <RouterView class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto" />
-      <footer class="flex flex-col gap-2 p-2">Music Player</footer>
+      <RouterView
+        class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"
+        :audio="{ audioElement }"
+      >
+      </RouterView>
+      <Separator />
+      <footer
+        class="flex h-20 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
+      >
+        <PlayerBar ref="playerBar" />
+      </footer>
     </SidebarInset>
   </SidebarProvider>
 </template>

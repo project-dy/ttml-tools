@@ -8,11 +8,17 @@ import LyricsViewer from "@/components/LyricsViewer.vue";
 import { Input } from "@/components/ui/input";
 // import { saveAsFile } from "./utils/save";
 
+const props = defineProps({
+  audio: { audioElement: HTMLAudioElement },
+});
+console.log(props);
+
 let lyrics: Lyrics;
 
 const childComponentRef = ref<InstanceType<typeof LyricsViewer> | null>(null);
 
-const audio = useTemplateRef("audio");
+// const audio = useTemplateRef("audio");
+const audio = props.audio;
 
 function refresh() {
   if (childComponentRef.value === null) return;
@@ -63,8 +69,9 @@ const handleFileInput = (e: Event) => {
       file.name.endsWith(".webm")
     ) {
       const blob = window.URL || window.webkitURL;
-      if (!audio.value || !blob) return;
-      const audioElement = audio.value;
+      console.log(audio);
+      if (!audio.audioElement || !blob) return;
+      const audioElement = audio.audioElement;
       const blobURL = blob.createObjectURL(file);
       audioElement.src = blobURL;
       audioElement.load();
@@ -116,6 +123,6 @@ const handleFileInput = (e: Event) => {
       ref="fileInput"
     />
     <LyricsViewer ref="childComponentRef" />
-    <audio ref="audio" controls />
+    <!-- <audio ref="audio" controls /> -->
   </main>
 </template>
