@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
+import vueDevTools from "vite-plugin-vue-devtools";
+
 import path from "node:path";
 import autoprefixer from "autoprefixer";
 import tailwind from "tailwindcss";
@@ -15,7 +17,7 @@ export default defineConfig(async () => ({
       plugins: [tailwind(), autoprefixer()],
     },
   },
-  plugins: [vue()],
+  plugins: [vue(), vueDevTools({ launchEditor: "zed" })],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
