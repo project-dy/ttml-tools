@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icon } from "@iconify/vue";
+import { useSidebar } from "@/components/ui/sidebar";
 import { useColorMode } from "@vueuse/core";
 
 // Pass { disableTransition: false } to enable transitions
@@ -22,6 +23,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarHeader,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,

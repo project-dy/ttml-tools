@@ -6,8 +6,14 @@ export function newRouter() {
   const routes: ReadonlyArray<RouteRecordRaw> = [
     {
       path: "/player",
-      component: () => import("@/pages/Home.vue"),
+      component: () => import("@/pages/Player.vue"),
       meta: { noPadding: true },
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: () => import("../pages/NotFound.vue"),
+      // meta: { fullScreen: true },
     },
     // {
     //   path: "/",
@@ -15,7 +21,7 @@ export function newRouter() {
     //   children: [
     //     {
     //       path: "/",
-    //       component: () => import("../pages/Home.vue"),
+    //       component: () => import("../pages/Player.vue"),
     //       meta: { noPadding: true },
     //     },
     //     {

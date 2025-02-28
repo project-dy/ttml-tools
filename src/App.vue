@@ -40,7 +40,8 @@ import { RouterView } from "vue-router";
           </Breadcrumb>
         </div>
       </header>
-      <RouterView />
+      <RouterView class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto" />
+      <footer class="flex flex-col gap-2 p-2">Music Player</footer>
     </SidebarInset>
   </SidebarProvider>
 </template>

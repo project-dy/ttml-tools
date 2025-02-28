@@ -4,7 +4,7 @@ import ttml from "@/utils/ttml";
 import elrc from "@/utils/elrc";
 import { Lyrics } from "@/utils/types";
 import LyricsViewer from "@/components/LyricsViewer.vue";
-import Background from "@/components/Background.vue";
+// import Background from "@/components/Background.vue";
 import { Input } from "@/components/ui/input";
 // import { saveAsFile } from "./utils/save";
 
