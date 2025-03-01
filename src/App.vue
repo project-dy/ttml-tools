@@ -15,17 +15,32 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { RouterView } from "vue-router";
-import PlayerBar from "./components/PlayerBar.vue";
-import { shallowRef, useTemplateRef } from "vue";
+// import PlayerBar from "./components/PlayerBar.vue";
+import { Upload } from "lucide-vue-next";
+import { Icon } from "@iconify/vue/dist/iconify.js";
+import { Button } from "@/components/ui/button";
+import { useTemplateRef } from "vue";
+import { Lyrics } from "@/utils/types";
+import ttml from "@/utils/ttml";
+import elrc from "@/utils/elrc";
 
 const audioElement = useTemplateRef("audio");
+const routerViewElement = useTemplateRef("routerView");
 
-const playerBar = useTemplateRef("playerBar");
-setInterval(
-  () =>
-    playerBar.value?.setAudioElement(audioElement.value as HTMLAudioElement),
-  0,
-);
+function toggleAudio() {
+  const audio = audioElement.value;
+  if (!audio) return;
+  audio.paused ? audio.play() : audio.pause();
+}
+
+function onFile() {
+  const input = document.createElement("input");
+  input.setAttribute("type", "file");
+  input.addEventListener("change", handleFileInput);
+  input.click();
+}
+
+let lyrics: Lyrics;
 </script>
 
 <template>
@@ -56,13 +71,40 @@ setInterval(
       <RouterView
         class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"
         :audio="{ audioElement }"
+        ref="routerView"
       >
       </RouterView>
       <Separator />
       <footer
         class="flex h-20 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
       >
-        <PlayerBar ref="playerBar" />
+        <main class="grid h-full shrink-0 items-center grid-cols-3 w-full">
+          <div class="flex flex-col w-full h-full pl-4 text-sm justify-center">
+            <div>
+              <a>Song Name</a>
+            </div>
+            <div class="text-muted-foreground">
+              <a>Artist</a>
+            </div>
+            <div class="text-muted-foreground">
+              <a>Album</a>
+            </div>
+          </div>
+
+          <!-- <Button><Icon icon="material-symbols:play-arrow-rounded"></Icon></Button> -->
+          <div class="flex flex-col w-full h-full justify-center items-center">
+            <Button variant="ghost" size="icon" :onclick="toggleAudio">
+              <Icon icon="material-symbols:play-arrow-rounded" />
+            </Button>
+          </div>
+          <div
+            class="flex flex-col w-full h-full pr-4 justify-center items-end"
+          >
+            <Button variant="ghost" size="icon" :onclick="onFile">
+              <Upload />
+            </Button>
+          </div>
+        </main>
       </footer>
     </SidebarInset>
   </SidebarProvider>

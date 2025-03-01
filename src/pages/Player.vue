@@ -35,6 +35,12 @@ function syncAudioElement(audioElement: HTMLAudioElement) {
   childComponentRef.value.syncAudioElement(audioElement);
 }
 
+function setLyrics(lyric: Lyrics) {
+  lyrics = lyric;
+}
+
+defineExpose({ refresh, onCurrentTimeChange, syncAudioElement, setLyrics });
+
 const handleFileInput = (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0];
   if (!file) {
