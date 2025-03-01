@@ -24,13 +24,13 @@ import { Lyrics } from "@/utils/types";
 import ttml from "@/utils/ttml";
 import elrc from "@/utils/elrc";
 
-const audioElement = useTemplateRef("audio");
+const audio = useTemplateRef("audio");
 const routerViewElement = useTemplateRef("routerView");
 
 function toggleAudio() {
-  const audio = audioElement.value;
-  if (!audio) return;
-  audio.paused ? audio.play() : audio.pause();
+  const audioE = audio.value;
+  if (!audioE) return;
+  audioE.paused ? audioE.play() : audioE.pause();
 }
 
 function onFile() {
@@ -41,6 +41,85 @@ function onFile() {
 }
 
 let lyrics: Lyrics;
+const handleFileInput = (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (!file) {
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    // if (!e.target) return;
+    // console.log(file.name);
+    const text = e.target?.result as string;
+    if (!text) return;
+    if (file.name.endsWith(".ttml")) {
+      console.log(ttml.parse(text));
+      lyrics = ttml.standardize(ttml.parse(text));
+      console.log(lyrics);
+
+      const elrcLyrics = elrc.destandardize(lyrics);
+      console.log(elrcLyrics);
+      const elrcString = elrc.stringify(elrcLyrics);
+      console.log(elrcString);
+      // saveAsFile("lyrics.elrc", elrcString);
+    } else if (file.name.endsWith(".lrc") || file.name.endsWith(".elrc")) {
+      // console.log(elrc.parse(text));
+      lyrics = elrc.standardize(elrc.parse(text));
+      console.log(lyrics);
+      const ttmlLyrics = ttml.destandardize(lyrics);
+      console.log(ttmlLyrics);
+    } else if (
+      file.name.endsWith(".flac") ||
+      file.name.endsWith(".mp3") ||
+      file.name.endsWith(".m4a") ||
+      file.name.endsWith(".webm")
+    ) {
+      const blob = window.URL || window.webkitURL;
+      console.log(audio);
+      if (!audio.value || !blob) return;
+      const audioElement = audio.value as HTMLAudioElement;
+      const blobURL = blob.createObjectURL(file);
+      audioElement.src = blobURL;
+      audioElement.load();
+      audioElement.play();
+      audioElement.pause();
+      // audioElement.onload = () => {
+      //   blob.revokeObjectURL(blobURL);
+      // };
+      /*audioElement.addEventListener("timeupdate", (e: Event) => {
+        const el = e.target as HTMLAudioElement;
+        const currentTime = el.currentTime;
+        // console.log(currentTime);
+        onCurrentTimeChange(currentTime);
+        syncAudioElement(el);
+        });*/
+      let interval: ReturnType<typeof setInterval>;
+      audioElement.addEventListener("play", (e) => {
+        interval = setInterval(
+          (e: Event) => {
+            // const el = e.target as HTMLAudioElement;
+            // const currentTime = el.currentTime;
+            // console.log(currentTime);
+            // onCurrentTimeChange(currentTime);
+            // syncAudioElement(el);
+          },
+          0,
+          e,
+        );
+      });
+      audioElement.addEventListener("pause", () => {
+        clearInterval(interval);
+      });
+      audioElement.addEventListener("load", () => {
+        clearInterval(interval);
+      });
+    }
+    // refresh();
+    if (audio.value) audio.value.setAttribute("lyrics", JSON.stringify(lyrics));
+  };
+  reader.readAsText(file);
+};
+defineExpose({ handleFileInput });
 </script>
 
 <template>
@@ -70,9 +149,14 @@ let lyrics: Lyrics;
       </header>
       <RouterView
         class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"
-        :audio="{ audioElement }"
-        ref="routerView"
+        v-slot="{ Component }"
       >
+        <component
+          :is="Component"
+          ref="routerView"
+          :audio="audio"
+          :lyrics="lyrics"
+        ></component>
       </RouterView>
       <Separator />
       <footer
