@@ -23,6 +23,7 @@ import { useTemplateRef } from "vue";
 import { Lyrics } from "@/utils/types";
 import ttml from "@/utils/ttml";
 import elrc from "@/utils/elrc";
+import { saveAsFile } from "./utils/save";
 
 const audio = useTemplateRef("audio");
 const routerViewElement = useTemplateRef("routerView");
@@ -57,10 +58,10 @@ const handleFileInput = (e: Event) => {
       lyrics = ttml.standardize(ttml.parse(text));
       console.log(lyrics);
 
-      const elrcLyrics = elrc.destandardize(lyrics);
-      console.log(elrcLyrics);
-      const elrcString = elrc.stringify(elrcLyrics);
-      console.log(elrcString);
+      // const elrcLyrics = elrc.destandardize(lyrics);
+      // console.log(elrcLyrics);
+      // const elrcString = elrc.stringify(elrcLyrics);
+      // console.log(elrcString);
       // saveAsFile("lyrics.elrc", elrcString);
     } else if (file.name.endsWith(".lrc") || file.name.endsWith(".elrc")) {
       // console.log(elrc.parse(text));
@@ -93,7 +94,7 @@ const handleFileInput = (e: Event) => {
         onCurrentTimeChange(currentTime);
         syncAudioElement(el);
         });*/
-      let interval: ReturnType<typeof setInterval>;
+      /*let interval: ReturnType<typeof setInterval>;
       audioElement.addEventListener("play", (e) => {
         interval = setInterval(
           (e: Event) => {
@@ -112,7 +113,7 @@ const handleFileInput = (e: Event) => {
       });
       audioElement.addEventListener("load", () => {
         clearInterval(interval);
-      });
+        });*/
     }
     // refresh();
     if (audio.value) audio.value.setAttribute("lyrics", JSON.stringify(lyrics));

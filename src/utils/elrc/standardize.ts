@@ -34,7 +34,7 @@ export function standardize(elrcLyrics: ELRCLyrics): Lyrics {
     },
   );
   let manIsFirst: Boolean | undefined = undefined;
-  const lines: LyricsLine[] = elrcLyrics.lines.map((line) => {
+  const lines: LyricsLine[] = elrcLyrics.lines.map((line, i) => {
     if (line.waraoke != "D" && manIsFirst === undefined) {
       if (line.waraoke == "F") manIsFirst = false;
       if (line.waraoke == "M") manIsFirst = true;
@@ -47,9 +47,21 @@ export function standardize(elrcLyrics: ELRCLyrics): Lyrics {
     } else if (line.waraoke == "M") {
       singerNumber = [Number(manIsFirst)];
     }
+    let words: LyricsWord[] = line.words;
+    words.forEach((word, i) => {
+      if (!word.startTime) return;
+      const prev = words[i - 1];
+      if (prev) if (!prev.endTime) words[i - 1].endTime = word.startTime;
+    });
+    if (words[words.length - 1] && !words[words.length - 1].endTime) {
+      if (elrcLyrics.lines[i + 1]?.startTime)
+        words[words.length - 1].endTime = elrcLyrics.lines[i + 1].startTime;
+    }
+    // console.log(words[words.length - 1]);
     const newLine: LyricsLine = {
-      words: line.words,
+      words,
       startTime: line.startTime,
+      endTime: elrcLyrics.lines[i + 1]?.startTime,
       isBackground: false,
       singerNumber,
     };
